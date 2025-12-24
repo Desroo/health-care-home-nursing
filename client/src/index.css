@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+:root{
+  --brand: 14 116 144;     /* teal-ish */
+  --brand2: 37 99 235;     /* blue */
+}
