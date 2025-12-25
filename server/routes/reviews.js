@@ -18,7 +18,7 @@ router.post("/", async (req, res) => {
   try {
     const { name, service, rating, message } = req.body;
 
-    if (!name || !service || !rating || !message) {
+    if (!name || !service || rating === undefined || !message) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -29,12 +29,10 @@ router.post("/", async (req, res) => {
       message,
     });
 
-    res.status(201).json({
-      message: "Review submitted for approval",
-      review,
-    });
+    res.status(201).json({ message: "Review submitted for approval", review });
   } catch (err) {
-    res.status(500).json({ message: "Failed to submit review" });
+    console.error("POST /api/reviews error:", err);
+    res.status(500).json({ message: err.message || "Failed to submit review" });
   }
 });
 
