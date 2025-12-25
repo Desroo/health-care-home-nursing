@@ -2,63 +2,81 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 const API = import.meta.env.VITE_API_URL;
-const ADMIN_KEY = prompt("Enter admin key");
 
 export default function AdminReviews() {
+  const [adminKey] = useState(() => window.prompt("Enter admin key") || "");
   const [reviews, setReviews] = useState([]);
+  const [error, setError] = useState("");
 
   async function load() {
-    const res = await axios.get(`${API}/api/reviews/admin/all`, {
-      headers: { "x-admin-key": ADMIN_KEY },
-    });
-    setReviews(res.data);
+    try {
+      setError("");
+      const res = await axios.get(`${API}/api/reviews/admin/all`, {
+        headers: { "x-admin-key": adminKey },
+      });
+      setReviews(res.data);
+    } catch (e) {
+      setError(e?.response?.data?.message || e.message);
+    }
   }
 
   async function approve(id) {
-    await axios.patch(
-      `${API}/api/reviews/${id}/approve`,
-      {},
-      { headers: { "x-admin-key": ADMIN_KEY } }
-    );
-    load();
+    try {
+      await axios.patch(
+        `${API}/api/reviews/${id}/approve`,
+        {},
+        { headers: { "x-admin-key": adminKey } }
+      );
+      load();
+    } catch (e) {
+      alert(e?.response?.data?.message || e.message);
+    }
   }
 
   useEffect(() => {
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-extrabold mb-6">Admin Review Approval</h1>
+    <div className="max-w-5xl mx-auto px-4 py-10">
+      <h1 className="text-2xl font-extrabold text-gray-900">
+        Admin — Review Approval
+      </h1>
 
-      {reviews.map((r) => (
-        <div
-          key={r._id}
-          className="border rounded-xl p-4 mb-4 bg-white shadow-sm"
-        >
-          <div className="flex justify-between">
-            <div>
-              <p className="font-bold">{r.name}</p>
-              <p className="text-sm text-gray-600">{r.service}</p>
-              <p className="mt-2">{r.message}</p>
-              <p className="text-sm mt-1">Rating: {r.rating}</p>
-            </div>
-
-            {!r.approved && (
-              <button
-                onClick={() => approve(r._id)}
-                className="bg-emerald-600 text-white px-4 py-2 rounded-lg"
-              >
-                Approve
-              </button>
-            )}
-          </div>
-
-          {r.approved && (
-            <p className="text-green-600 font-semibold mt-2">Approved</p>
-          )}
+      {error && (
+        <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-4 text-red-800">
+          {error}
         </div>
-      ))}
+      )}
+
+      <div className="mt-6 space-y-4">
+        {reviews.map((r) => (
+          <div key={r._id} className="rounded-2xl border border-gray-200 p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <div className="font-bold text-gray-900">{r.name}</div>
+                <div className="text-sm text-gray-600">
+                  {r.service} • {r.rating}/5
+                </div>
+                <p className="mt-3 text-gray-700">{r.message}</p>
+                <div className="mt-3 text-xs text-gray-500">
+                  {r.approved ? "Approved ✅" : "Pending ⏳"}
+                </div>
+              </div>
+
+              {!r.approved && (
+                <button
+                  onClick={() => approve(r._id)}
+                  className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700"
+                >
+                  Approve
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
