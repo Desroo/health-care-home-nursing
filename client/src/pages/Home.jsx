@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function Home() {
   return (
     <main className="bg-white">
@@ -25,19 +27,21 @@ export default function Home() {
                 supporting families with Baby Sitting, Elder Care, and Patient Care services.
               </p>
 
+              {/* ✅ Use Link instead of <a href> */}
               <div className="mt-7 flex flex-wrap gap-3">
-                <a
-                  href="/about"
+                <Link
+                  to="/about"
                   className="inline-flex items-center justify-center rounded-xl bg-emerald-500 px-5 py-3 text-sm font-bold text-white hover:bg-emerald-600"
                 >
                   Contact Us
-                </a>
-                <a
-                  href="/reviews"
+                </Link>
+
+                <Link
+                  to="/reviews"
                   className="inline-flex items-center justify-center rounded-xl bg-white/10 px-5 py-3 text-sm font-bold text-white ring-1 ring-white/25 hover:bg-white/15"
                 >
                   View Reviews
-                </a>
+                </Link>
               </div>
 
               <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -99,7 +103,8 @@ export default function Home() {
           </div>
 
           <p className="mt-6 max-w-4xl text-gray-600 leading-relaxed">
-            Operating exclusively under our distinguished tagline, <span className="font-semibold text-gray-900">Reliable Elite Care</span>, we offer bespoke nursing
+            Operating exclusively under our distinguished tagline,{" "}
+            <span className="font-semibold text-gray-900">Reliable Elite Care</span>, we offer bespoke nursing
             and personalized support delivered with utmost precision and discretion.
             Our clientele consists of individuals and families who demand more than just care;
             they demand an elevated standard of living and peace of mind.
@@ -121,7 +126,7 @@ export default function Home() {
             />
             <BulletCard
               title="Bespoke Client Focus"
-              text="Services uniquely tailored to individual needs, managed by a team of expert nurses and caregivers available at your convenience, 24/7."
+              text="Services uniquely tailored to individual needs, managed by a team of expert nurses and caregivers available 24/7."
             />
             <BulletCard
               title="Unrivaled Expertise"
@@ -179,7 +184,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SERVICES (your core services section) */}
+      {/* SERVICES */}
       <section className="bg-white border-t">
         <div className="mx-auto max-w-6xl px-4 py-12">
           <h2 className="text-2xl font-extrabold text-gray-900">Services We Offer</h2>
@@ -220,12 +225,13 @@ export default function Home() {
               </p>
             </div>
 
-            <a
-              href="/about"
+            {/* ✅ Link instead of <a href> */}
+            <Link
+              to="/about"
               className="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white hover:bg-emerald-700"
             >
               Get in Touch
-            </a>
+            </Link>
           </div>
         </div>
       </section>
