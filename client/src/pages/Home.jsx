@@ -1,5 +1,9 @@
 import { Link } from "react-router-dom";
 
+<p style={{ background: "red", color: "white", padding: 10 }}>
+  BUILD TEST — {new Date().toISOString()}
+</p>
+
 export default function Home() {
   return (
     <main className="bg-white">
