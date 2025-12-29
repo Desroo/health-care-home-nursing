@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { isAdminLoggedIn, clearAdminKey } from "../utils/adminAuth";
 
-const WHATSAPP_NUMBER = "+94 721000801"; // <-- change this (Sri Lanka format, no +, no spaces)
-const WHATSAPP_TEXT = "Hello! I would like to know about your home nursing services.";
+const WHATSAPP_NUMBER = "94721000801"; // Sri Lanka format, NO +
+const WHATSAPP_TEXT =
+  "Hello! I would like to know about your home nursing services.";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -17,6 +19,11 @@ export default function Navbar() {
         ? "bg-emerald-50 text-emerald-800 ring-1 ring-emerald-100"
         : "text-gray-700 hover:text-emerald-800 hover:bg-emerald-50"
     }`;
+
+  function logoutAdmin() {
+    clearAdminKey();
+    window.location.hash = "#/admin/login";
+  }
 
   return (
     <header className="sticky top-0 z-50 border-b bg-white/85 backdrop-blur">
@@ -49,6 +56,23 @@ export default function Navbar() {
           <NavLink to="/reviews" className={linkClass}>
             Reviews
           </NavLink>
+
+          {/* Admin button */}
+          {isAdminLoggedIn() ? (
+            <button
+              onClick={logoutAdmin}
+              className="ml-2 rounded-xl bg-gray-900 px-4 py-2 text-sm font-bold text-white hover:bg-black"
+            >
+              Logout Admin
+            </button>
+          ) : (
+            <NavLink
+              to="/admin/login"
+              className="ml-2 rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-bold text-gray-900 hover:bg-gray-50"
+            >
+              Admin
+            </NavLink>
+          )}
 
           <a
             href={waLink}
@@ -104,6 +128,27 @@ export default function Navbar() {
             >
               Reviews
             </NavLink>
+
+            {/* Mobile Admin */}
+            {isAdminLoggedIn() ? (
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  logoutAdmin();
+                }}
+                className="rounded-xl bg-gray-900 px-4 py-2 text-sm font-bold text-white"
+              >
+                Logout Admin
+              </button>
+            ) : (
+              <NavLink
+                to="/admin/login"
+                onClick={() => setOpen(false)}
+                className="rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-bold text-gray-900"
+              >
+                Admin
+              </NavLink>
+            )}
 
             <a
               href={waLink}
