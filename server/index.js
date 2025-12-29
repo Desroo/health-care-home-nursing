@@ -7,28 +7,27 @@ const reviewRoutes = require("./routes/reviews");
 
 const app = express();
 
-// ✅ CORS (dev + production)
 const allowedOrigins = [
   "http://localhost:5173",
   "https://health-care-home-nursing.vercel.app",
   process.env.CLIENT_URL,
 ].filter(Boolean);
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // allow requests with no origin (like Postman) and allow known origins
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-      return callback(new Error("CORS blocked: " + origin), false);
-    },
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+const corsOptions = {
+  origin: function (origin, callback) {
+    // allow requests with no origin (like Postman) and allow known origins
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error("CORS blocked: " + origin), false);
+  },
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "x-admin-key"],
+};
 
-// ✅ Handle preflight requests explicitly
-app.options("*", cors());
+app.use(cors(corsOptions));
+
+// ✅ Handle preflight requests explicitly (use SAME options)
+app.options("*", cors(corsOptions));
 
 app.use(express.json());
 
