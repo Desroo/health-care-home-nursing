@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { getAdminKey, clearAdminKey } from "../utils/adminAuth";
 
 const API = import.meta.env.VITE_API_URL;
 
 export default function AdminReviews() {
-  const [adminKey, setAdminKey] = useState("");
+  const navigate = useNavigate();
+  const [adminKey, setAdminKeyState] = useState("");
   const [reviews, setReviews] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -18,7 +21,14 @@ export default function AdminReviews() {
       });
       setReviews(res.data);
     } catch (e) {
-      setError(e?.response?.data?.message || e.message);
+      const msg = e?.response?.data?.message || e.message;
+      setError(msg);
+
+      // If key is wrong/expired, log out to be safe
+      if (e?.response?.status === 401) {
+        clearAdminKey();
+        navigate("/admin/login");
+      }
     } finally {
       setLoading(false);
     }
@@ -37,14 +47,19 @@ export default function AdminReviews() {
     }
   }
 
+  function logout() {
+    clearAdminKey();
+    navigate("/admin/login");
+  }
+
   useEffect(() => {
-    const key = window.prompt("Enter admin key") || "";
-    setAdminKey(key);
-    if (key) load(key);
-    else {
-      setLoading(false);
-      setError("No admin key provided.");
+    const key = getAdminKey();
+    if (!key) {
+      navigate("/admin/login");
+      return;
     }
+    setAdminKeyState(key);
+    load(key);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -60,12 +75,20 @@ export default function AdminReviews() {
           </p>
         </div>
 
-        <button
-          onClick={() => load(adminKey)}
-          className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-bold hover:bg-gray-50"
-        >
-          Refresh
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => load(adminKey)}
+            className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-bold hover:bg-gray-50"
+          >
+            Refresh
+          </button>
+          <button
+            onClick={logout}
+            className="rounded-xl bg-gray-900 px-4 py-2 text-sm font-bold text-white hover:bg-black"
+          >
+            Logout
+          </button>
+        </div>
       </div>
 
       {error && (
